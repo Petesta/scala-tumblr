@@ -5,7 +5,7 @@ final case class Meta(
   msg: String
 )
 
-sealed trait Response
+sealed trait Base
 
 final case class TaggedResponse(
   blog: BlogInfo
@@ -34,7 +34,7 @@ final case class BlogInfo(
 
 final case class LikeResponse(
   blog: BlogInfo
-) extends Response
+) extends Base
 
 final case class Reblog(
   comment: String,
@@ -140,5 +140,5 @@ final case class PostResponse(
 
 final case class TumblrResponse(
   meta: Meta,
-  response: Response
+  response: Base
 )
