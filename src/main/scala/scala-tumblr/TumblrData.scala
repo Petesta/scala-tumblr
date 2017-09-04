@@ -92,7 +92,7 @@ final case class Size(
   height: Long
 )
 
-final case class Photo(
+final case class Photos(
   caption: String,
   originalSize: Size,
   altSizes: List[Size]
@@ -123,7 +123,7 @@ final case class Post(
   reblog: Reblog,
   trail: List[Trail],
   photosetLayout: String,
-  photos: Option[List[Photo]],
+  photos: Option[List[Photos]],
   canLike: Boolean,
   canReblog: Boolean,
   canSendInMessage: Boolean,

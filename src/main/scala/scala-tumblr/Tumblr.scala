@@ -54,8 +54,8 @@ final case class Tagged(tag: String, params: Option[Map[String, String]] = None)
 }
 
 sealed trait OAuth extends ApiKey {
-  protected val oauthToken = sys.env.get("oauth_token")
-  protected val oauthTokenSecret = sys.env.get("oauth_token_secret")
+  private val oauthToken = sys.env.get("oauth_token")
+  private val oauthTokenSecret = sys.env.get("oauth_token_secret")
 
   protected val oauthParams =
     s"&${oauthToken.getOrElse("")}=${oauthTokenSecret.getOrElse("")}$keyValuePairs"
@@ -109,25 +109,6 @@ final case class UserFollowing(params: Option[Map[String, String]] = None) exten
   val path = "/v2/user/following"
 }
 
-// final case class CreatePost(blogName: String, text: String, params: Option[Map[String, String]] = None) extends OAuth {
-//   val path = s"/v2/blog/$blogName.tumblr.com/post"
-//
-//   override protected val url = s"$path$apiKey&text=$text$keyValuePairs"
-// }
-
-// final case class EditPost(blogName: String, text: String, params: Option[Map[String, String]] = None) extends OAuth {
-//   val path = s"/v2/blog/$blogName.tumblr.com/post/edit"
-//
-//   override protected val url = s"$path$apiKey&text=$text$keyValuePairs"
-// }
-
-// final case class ReblogPost(blogName: String, id: Long, reblogKey: Long, text: String) extends OAuth {
-//   val params: Option[Map[String, String]] = None
-//   val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
-//
-//   override protected val url = s"$path$apiKey&id=$id&reblog_key=$reblogKey&text=$text"
-// }
-
 final case class DeletePost(blogName: String, id: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/blog/$blogName.tumblr.com/post/delete"
@@ -161,4 +142,36 @@ final case class UnlikePost(id: Long, reblogKey: Long) extends OAuth {
   val path = s"/v2/user/unlike"
 
   override protected val url = s"$path$apiKey$oauthParams&id=$id&reblog_key=$reblogKey"
+}
+
+final case class CreatePost(
+  blogName: String,
+  posts: PostType,
+  params: Option[Map[String, String]] = None
+) extends OAuth {
+  val path = s"/v2/blog/$blogName.tumblr.com/post"
+
+  override protected val url = s"$path$apiKey${posts.`type`}$keyValuePairs"
+}
+
+final case class EditPost(
+  blogName: String,
+  posts: PostType,
+  params: Option[Map[String, String]] = None
+) extends OAuth {
+  val path = s"/v2/blog/$blogName.tumblr.com/post/edit"
+
+  override protected val url = s"$path$apiKey${posts.`type`}$keyValuePairs"
+}
+
+final case class ReblogPost(
+  blogName: String,
+  id: Long,
+  reblogKey: Long,
+  posts: PostType,
+  params: Option[Map[String, String]]
+) extends OAuth {
+  val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
+
+  override protected val url = s"$path$apiKey${posts.`type`}&id=$id&reblog_key=$reblogKey"
 }
