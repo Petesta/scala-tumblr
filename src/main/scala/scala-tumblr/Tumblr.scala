@@ -62,7 +62,7 @@ sealed trait OAuth extends ApiKey {
 
   override def get = client(Request(Method.Get, s"$path$apiKey$oauthParams"))
 
-  protected val url = s"$root$path$apiKey$keyValuePairs"
+  protected val url = s"$root$path$apiKey$oauthParams$keyValuePairs"
 
   private val request =
     RequestBuilder()
@@ -132,33 +132,33 @@ final case class DeletePost(blogName: String, id: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/blog/$blogName.tumblr.com/post/delete"
 
-  override protected val url = s"$path$apiKey&id=$id"
+  override protected val url = s"$path$apiKey$oauthParams&id=$id"
 }
 
 final case class FollowUser(blogUrl: String) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/follow"
 
-  override protected val url = s"$path$apiKey&url=$blogUrl"
+  override protected val url = s"$path$apiKey$oauthParams&url=$blogUrl"
 }
 
 final case class UnollowUser(blogUrl: String) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unfollow"
 
-  override protected val url = s"$path$apiKey&url=$blogUrl"
+  override protected val url = s"$path$apiKey$oauthParams&url=$blogUrl"
 }
 
 final case class LikePost(id: Long, reblogKey: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/like"
 
-  override protected val url = s"$path$apiKey&id=$id&reblog_key=$reblogKey"
+  override protected val url = s"$path$apiKey$oauthParams&id=$id&reblog_key=$reblogKey"
 }
 
 final case class UnlikePost(id: Long, reblogKey: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unlike"
 
-  override protected val url = s"$path$apiKey&id=$id&reblog_key=$reblogKey"
+  override protected val url = s"$path$apiKey$oauthParams&id=$id&reblog_key=$reblogKey"
 }
