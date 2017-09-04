@@ -115,12 +115,18 @@ final case class UserFollowing(params: Option[Map[String, String]] = None) exten
 //   override protected val url = s"$path$apiKey&text=$text$keyValuePairs"
 // }
 
-final case class ReblogPost(blogName: String, id: Long, reblogKey: Long, text: String) extends OAuth {
-  val params: Option[Map[String, String]] = None
-  val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
+// final case class EditPost(blogName: String, text: String, params: Option[Map[String, String]] = None) extends OAuth {
+//   val path = s"/v2/blog/$blogName.tumblr.com/post/edit"
+//
+//   override protected val url = s"$path$apiKey&text=$text$keyValuePairs"
+// }
 
-  override protected val url = s"$path$apiKey&id=$id&reblog_key=$reblogKey&text=$text"
-}
+// final case class ReblogPost(blogName: String, id: Long, reblogKey: Long, text: String) extends OAuth {
+//   val params: Option[Map[String, String]] = None
+//   val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
+//
+//   override protected val url = s"$path$apiKey&id=$id&reblog_key=$reblogKey&text=$text"
+// }
 
 final case class DeletePost(blogName: String, id: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
