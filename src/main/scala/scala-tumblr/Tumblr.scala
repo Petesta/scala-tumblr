@@ -18,10 +18,12 @@ sealed trait Tumblr {
     }.getOrElse("")
 
   def get: Future[Response]
+
+  protected def versionBlog(blogName: String) = s"/v2/blog/$blogName.tumblr.com"
 }
 
 final case class Avatar(blogName: String, size: Int) extends Tumblr {
-  val path = s"/v2/blog/$blogName.tumblr.com/avatar"
+  val path = s"${versionBlog(blogName)}/avatar"
   val params: Option[Map[String, String]] = None
 
   def get = client(Request(Method.Get, s"$path?size=$size"))
@@ -36,15 +38,15 @@ sealed trait ApiKey extends Tumblr {
 }
 
 final case class Info(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
-  val path = s"/v2/blog/$blogName.tumblr.com/info"
+  val path = s"${versionBlog(blogName)}/info"
 }
 
 final case class Likes(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
-  val path = s"/v2/blog/$blogName.tumblr.com/likes"
+  val path = s"${versionBlog(blogName)}/likes"
 }
 
 final case class Posts(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
-  val path = s"/v2/blog/$blogName.tumblr.com/photos"
+  val path = s"${versionBlog(blogName)}/photos"
 }
 
 final case class Tagged(tag: String, params: Option[Map[String, String]] = None) extends ApiKey {
@@ -58,11 +60,12 @@ sealed trait OAuth extends ApiKey {
   private val oauthTokenSecret = sys.env.get("oauth_token_secret")
 
   protected val oauthParams =
-    s"&${oauthToken.getOrElse("")}=${oauthTokenSecret.getOrElse("")}$keyValuePairs"
+    s"&oauth_token=${oauthToken.getOrElse("")}&oauth_token_secret=${oauthTokenSecret.getOrElse("")}$keyValuePairs"
 
   override def get = client(Request(Method.Get, s"$path$apiKey$oauthParams"))
 
-  protected val url = s"$root$path$apiKey$oauthParams$keyValuePairs"
+  protected val urlBuilder = s"https://$root$path$apiKey$oauthParams$keyValuePairs"
+  protected val url = urlBuilder
 
   private val request =
     RequestBuilder()
@@ -74,23 +77,23 @@ sealed trait OAuth extends ApiKey {
 }
 
 final case class Following(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/following"
+  val path = s"${versionBlog(blogName)}/following"
 }
 
 final case class Followers(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/followers"
+  val path = s"${versionBlog(blogName)}/followers"
 }
 
 final case class PostsQueue(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/posts/queue"
+  val path = s"${versionBlog(blogName)}/posts/queue"
 }
 
 final case class PostsDraft(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/posts/draft"
+  val path = s"${versionBlog(blogName)}/posts/draft"
 }
 
 final case class PostsSubmission(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/posts/submission"
+  val path = s"${versionBlog(blogName)}/posts/submission"
 }
 
 final case class UserInfo(params: Option[Map[String, String]] = None) extends OAuth {
@@ -111,37 +114,37 @@ final case class UserFollowing(params: Option[Map[String, String]] = None) exten
 
 final case class DeletePost(blogName: String, id: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
-  val path = s"/v2/blog/$blogName.tumblr.com/post/delete"
+  val path = s"${versionBlog(blogName)}/post/delete"
 
-  override protected val url = s"$path$apiKey$oauthParams&id=$id"
+  override protected val url = s"$urlBuilder&id=$id"
 }
 
 final case class FollowUser(blogUrl: String) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/follow"
 
-  override protected val url = s"$path$apiKey$oauthParams&url=$blogUrl"
+  override protected val url = s"$urlBuilder&url=$blogUrl"
 }
 
 final case class UnollowUser(blogUrl: String) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unfollow"
 
-  override protected val url = s"$path$apiKey$oauthParams&url=$blogUrl"
+  override protected val url = s"$urlBuilder&url=$blogUrl"
 }
 
 final case class LikePost(id: Long, reblogKey: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/like"
 
-  override protected val url = s"$path$apiKey$oauthParams&id=$id&reblog_key=$reblogKey"
+  override protected val url = s"$urlBuilder&id=$id&reblog_key=$reblogKey"
 }
 
 final case class UnlikePost(id: Long, reblogKey: Long) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unlike"
 
-  override protected val url = s"$path$apiKey$oauthParams&id=$id&reblog_key=$reblogKey"
+  override protected val url = s"$urlBuilder&id=$id&reblog_key=$reblogKey"
 }
 
 final case class CreatePost(
@@ -149,9 +152,9 @@ final case class CreatePost(
   posts: PostType,
   params: Option[Map[String, String]] = None
 ) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/post"
+  val path = s"${versionBlog(blogName)}/post"
 
-  override protected val url = s"$path$apiKey${posts.`type`}$keyValuePairs"
+  override protected val url = s"$urlBuilder${posts.`type`}"
 }
 
 final case class EditPost(
@@ -159,9 +162,9 @@ final case class EditPost(
   posts: PostType,
   params: Option[Map[String, String]] = None
 ) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/post/edit"
+  val path = s"${versionBlog(blogName)}/post/edit"
 
-  override protected val url = s"$path$apiKey${posts.`type`}$keyValuePairs"
+  override protected val url = s"$urlBuilder${posts.`type`}"
 }
 
 final case class ReblogPost(
@@ -171,7 +174,7 @@ final case class ReblogPost(
   posts: PostType,
   params: Option[Map[String, String]] = None
 ) extends OAuth {
-  val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
+  val path = s"${versionBlog(blogName)}/post/reblog"
 
-  override protected val url = s"$path$apiKey${posts.`type`}&id=$id&reblog_key=$reblogKey"
+  override protected val url = s"$urlBuilder${posts.`type`}&id=$id&reblog_key=$reblogKey"
 }
