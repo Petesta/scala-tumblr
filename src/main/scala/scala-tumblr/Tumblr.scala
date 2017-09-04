@@ -169,7 +169,7 @@ final case class ReblogPost(
   id: Long,
   reblogKey: Long,
   posts: PostType,
-  params: Option[Map[String, String]]
+  params: Option[Map[String, String]] = None
 ) extends OAuth {
   val path = s"/v2/blog/$blogName.tumblr.com/post/reblog"
 
