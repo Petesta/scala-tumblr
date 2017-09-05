@@ -6,11 +6,10 @@ import com.twitter.io.Buf
 import com.twitter.util.Future
 
 sealed trait Tumblr {
-  protected val root = "api.tumblr.com"
-
   val path: String
   val params: Option[Map[String, String]]
 
+  protected val root = "api.tumblr.com"
   protected val client = Http.client.withTls(root).newService(s"$root:443")
   protected val keyValuePairs =
     params.map { opt =>
@@ -30,9 +29,7 @@ final case class Avatar(blogName: String, size: Int) extends Tumblr {
 }
 
 sealed trait ApiKey extends Tumblr {
-  private val apiKeyEnv = sys.env.get("api_key")
-
-  protected val apiKey = s"?api_key=${apiKeyEnv.getOrElse("")}"
+  protected val apiKey = s"?api_key=${sys.env.get("api_key").getOrElse("")}"
 
   def get = client(Request(Method.Get, s"$path$apiKey$keyValuePairs"))
 }
