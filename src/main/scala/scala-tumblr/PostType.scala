@@ -1,9 +1,9 @@
 package io.github.petesta.tumblr
 
 sealed trait PostType {
-  private val filtered = "()".toSet
+  override def toString = this.getClass.getSimpleName.toLowerCase()
 
-  def `type` = "&type=" + toString.toLowerCase().filterNot(filtered)
+  def `type` = s"&text=$toString"
 }
 
 final case class Text(body: String, title: Option[String] = None) extends PostType
