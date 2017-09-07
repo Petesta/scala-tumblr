@@ -1,7 +1,13 @@
 package io.github.petesta.tumblr
 
-final case class TumblrConfig(
-  apiKey: Option[String] = None,
-  oauthToken: Option[String] = None,
-  oauthTokenSecret: Option[String] = None
-)
+sealed trait TumblrConfig {
+  val apiKey: String
+}
+
+final case class NoOauthConfig(apiKey: String) extends TumblrConfig
+
+final case class OauthConfig(
+  apiKey: String,
+  oauthToken: String,
+  oauthTokenSecret: String
+) extends TumblrConfig
