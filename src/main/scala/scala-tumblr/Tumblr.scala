@@ -49,7 +49,7 @@ final case class Posts(blogName: String, params: Option[Map[String, String]] = N
 final case class Tagged(tag: String, params: Option[Map[String, String]] = None) extends ApiKey {
   val path = "/v2/tagged"
 
-  override def get = client(Request(Method.Get, s"$path$apiKey&tag=$tag$keyValuePairs"))
+  override def get = client(Request(Method.Get, s"$root$path$apiKey&tag=$tag$keyValuePairs"))
 }
 
 sealed trait OAuth extends ApiKey {
@@ -59,7 +59,7 @@ sealed trait OAuth extends ApiKey {
   protected val oauthParams =
     s"&oauth_token=${oauthToken.getOrElse("")}&oauth_token_secret=${oauthTokenSecret.getOrElse("")}$keyValuePairs"
 
-  override def get = client(Request(Method.Get, s"$path$apiKey$oauthParams"))
+  override def get = client(Request(Method.Get, s"$root$path$apiKey$oauthParams"))
 
   protected val urlBuilder = s"https://$root$path$apiKey$oauthParams$keyValuePairs"
   protected val url = urlBuilder
