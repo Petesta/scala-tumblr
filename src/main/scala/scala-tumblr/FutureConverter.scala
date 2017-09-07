@@ -10,9 +10,11 @@ object FutureConverter {
     val scalaP = ScalaP[T]
     twitterF.onSuccess { r: T =>
       scalaP.success(r)
+      ()
     }
     twitterF.onFailure { e: Throwable =>
       scalaP.failure(e)
+      ()
     }
     scalaP.future
   }
