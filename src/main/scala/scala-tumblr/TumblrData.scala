@@ -1,17 +1,18 @@
 package io.github.petesta.tumblr
 
+import java.time.ZonedDateTime
+
 final case class Meta(
   status: Int,
   msg: String
 )
 
-sealed trait Base
+sealed trait TumblrResponse[T] {
+  val meta: Meta
+  val response: T
+}
 
-final case class TaggedResponse(
-  blog: BlogInfo
-)
-
-final case class BlogInfo(
+final case class Blog(
   ask: Boolean,
   askAnon: Boolean,
   askPageTitle: String,
@@ -32,9 +33,14 @@ final case class BlogInfo(
   isOptOutAds: Boolean
 )
 
-final case class LikeResponse(
-  blog: BlogInfo
-) extends Base
+final case class BlogInfo(
+  blog: Blog
+)
+
+final case class InfoResponse(
+  meta: Meta,
+  response: BlogInfo
+) extends TumblrResponse[BlogInfo]
 
 final case class Reblog(
   comment: String,
@@ -73,13 +79,13 @@ final case class BlogObject(
   canBeFollowed: Boolean
 )
 
-final case class PostObject(
+final case class TrailPostObject(
   id: String
 )
 
 final case class Trail(
   blog: List[BlogObject],
-  post: PostObject,
+  post: TrailPostObject,
   contentRaw: String,
   content: String,
   isCurrentItem: Boolean,
@@ -99,11 +105,12 @@ final case class Photos(
 )
 
 final case class Post(
+  `type`: String,
   blogName: String,
   id: Long,
   postUrl: String,
   slug: String,
-  date: String, // ZonedDateTime
+  date: ZonedDateTime,
   timestamp: Long,
   state: String,
   format: String,
@@ -112,8 +119,8 @@ final case class Post(
   shortUrl: String,
   summary: String,
   isBlocksPostFormat: Boolean,
-  // recommendedSource: Option[],
-  // recommendedColor: Option[],
+  recommendedSource: Option[String],
+  recommendedColor: Option[String],
   postAuthor: String,
   postAuthorIsAdult: Boolean,
   isSubmission: Boolean,
@@ -131,14 +138,29 @@ final case class Post(
   displayAvatar: Boolean
 )
 
-final case class PostResponse(
-  blog: BlogObject,
-  posts: List[Post],
-  totalPosts: Long// ,
-  // supplyLoggingPositions: List[]
+final case class LikesObject(
+  likedPosts: List[Post],
+  likedCount: Long
 )
 
-final case class TumblrResponse(
+final case class LikesResponse(
   meta: Meta,
-  response: Base
+  response: LikesObject
+) extends TumblrResponse[LikesObject]
+
+final case class TumblrPosts(
+  blog: Blog,
+  posts: List[Post],
+  totalPosts: Long,
+  supplyLoggingPositions: List[Double]
 )
+
+final case class PostsResponse(
+  meta: Meta,
+  response: TumblrPosts
+) extends TumblrResponse[TumblrPosts]
+
+final case class TaggedResponse(
+  meta: Meta,
+  response: List[Post]
+) extends TumblrResponse[List[Post]]

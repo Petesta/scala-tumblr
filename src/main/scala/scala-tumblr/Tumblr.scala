@@ -25,13 +25,13 @@ final case class Avatar(blogName: String, size: Int) extends Tumblr {
   val path = s"${versionBlog(blogName)}/avatar"
   val params: Option[Map[String, String]] = None
 
-  def get = client(Request(Method.Get, s"$path?size=$size"))
+  def get = client(Request(Method.Get, s"$root$path?size=$size"))
 }
 
 sealed trait ApiKey extends Tumblr {
   protected val apiKey = s"?api_key=${sys.env.get("api_key").getOrElse("")}"
 
-  def get = client(Request(Method.Get, s"$path$apiKey$keyValuePairs"))
+  def get = client(Request(Method.Get, s"$root$path$apiKey$keyValuePairs"))
 }
 
 final case class Info(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
@@ -43,7 +43,7 @@ final case class Likes(blogName: String, params: Option[Map[String, String]] = N
 }
 
 final case class Posts(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
-  val path = s"${versionBlog(blogName)}/photos"
+  val path = s"${versionBlog(blogName)}/posts"
 }
 
 final case class Tagged(tag: String, params: Option[Map[String, String]] = None) extends ApiKey {
