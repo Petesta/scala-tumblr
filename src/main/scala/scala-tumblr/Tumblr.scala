@@ -29,32 +29,34 @@ final case class Avatar(blogName: String, size: Int) extends Tumblr {
 }
 
 sealed trait ApiKey extends Tumblr {
-  protected val apiKey = s"?api_key=${sys.env.get("api_key").getOrElse("")}"
+  implicit val config: TumblrConfig
+
+  protected val apiKey = s"?api_key=${config.apiKey.getOrElse("")}"
 
   def get = client(Request(Method.Get, s"$root$path$apiKey$keyValuePairs"))
 }
 
-final case class Info(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
+final case class Info(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/info"
 }
 
-final case class Likes(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
+final case class Likes(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/likes"
 }
 
-final case class Posts(blogName: String, params: Option[Map[String, String]] = None) extends ApiKey {
+final case class Posts(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/posts"
 }
 
-final case class Tagged(tag: String, params: Option[Map[String, String]] = None) extends ApiKey {
+final case class Tagged(tag: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends ApiKey {
   val path = "/v2/tagged"
 
   override def get = client(Request(Method.Get, s"$root$path$apiKey&tag=$tag$keyValuePairs"))
 }
 
 sealed trait OAuth extends ApiKey {
-  private val oauthToken = sys.env.get("oauth_token")
-  private val oauthTokenSecret = sys.env.get("oauth_token_secret")
+  private val oauthToken = config.oauthToken
+  private val oauthTokenSecret = config.oauthTokenSecret
 
   protected val oauthParams =
     s"&oauth_token=${oauthToken.getOrElse("")}&oauth_token_secret=${oauthTokenSecret.getOrElse("")}$keyValuePairs"
@@ -73,71 +75,71 @@ sealed trait OAuth extends ApiKey {
   def post = client(request)
 }
 
-final case class Following(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
+final case class Following(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/following"
 }
 
-final case class Followers(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
+final case class Followers(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/followers"
 }
 
-final case class PostsQueue(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
+final case class PostsQueue(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/queue"
 }
 
-final case class PostsDraft(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
+final case class PostsDraft(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/draft"
 }
 
-final case class PostsSubmission(blogName: String, params: Option[Map[String, String]] = None) extends OAuth {
+final case class PostsSubmission(blogName: String, params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/submission"
 }
 
-final case class UserInfo(params: Option[Map[String, String]] = None) extends OAuth {
+final case class UserInfo(params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = "/v2/user/info"
 }
 
-final case class UserDashboard(params: Option[Map[String, String]] = None) extends OAuth {
+final case class UserDashboard(params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = "/v2/user/dashboard"
 }
 
-final case class UserLikes(params: Option[Map[String, String]] = None) extends OAuth {
+final case class UserLikes(params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = "/v2/user/likes"
 }
 
-final case class UserFollowing(params: Option[Map[String, String]] = None) extends OAuth {
+final case class UserFollowing(params: Option[Map[String, String]] = None)(implicit val config: TumblrConfig) extends OAuth {
   val path = "/v2/user/following"
 }
 
-final case class DeletePost(blogName: String, id: Long) extends OAuth {
+final case class DeletePost(blogName: String, id: Long)(implicit val config: TumblrConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"${versionBlog(blogName)}/post/delete"
 
   override protected val url = s"$urlBuilder&id=$id"
 }
 
-final case class FollowUser(blogUrl: String) extends OAuth {
+final case class FollowUser(blogUrl: String)(implicit val config: TumblrConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/follow"
 
   override protected val url = s"$urlBuilder&url=$blogUrl"
 }
 
-final case class UnollowUser(blogUrl: String) extends OAuth {
+final case class UnollowUser(blogUrl: String)(implicit val config: TumblrConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unfollow"
 
   override protected val url = s"$urlBuilder&url=$blogUrl"
 }
 
-final case class LikePost(id: Long, reblogKey: Long) extends OAuth {
+final case class LikePost(id: Long, reblogKey: Long)(implicit val config: TumblrConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/like"
 
   override protected val url = s"$urlBuilder&id=$id&reblog_key=$reblogKey"
 }
 
-final case class UnlikePost(id: Long, reblogKey: Long) extends OAuth {
+final case class UnlikePost(id: Long, reblogKey: Long)(implicit val config: TumblrConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unlike"
 
@@ -148,7 +150,7 @@ final case class CreatePost(
   blogName: String,
   posts: PostType,
   params: Option[Map[String, String]] = None
-) extends OAuth {
+)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post"
 
   override protected val url = s"$urlBuilder${posts.`type`}"
@@ -158,7 +160,7 @@ final case class EditPost(
   blogName: String,
   posts: PostType,
   params: Option[Map[String, String]] = None
-) extends OAuth {
+)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post/edit"
 
   override protected val url = s"$urlBuilder${posts.`type`}"
@@ -170,7 +172,7 @@ final case class ReblogPost(
   reblogKey: Long,
   posts: PostType,
   params: Option[Map[String, String]] = None
-) extends OAuth {
+)(implicit val config: TumblrConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post/reblog"
 
   override protected val url = s"$urlBuilder${posts.`type`}&id=$id&reblog_key=$reblogKey"
