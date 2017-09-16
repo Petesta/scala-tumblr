@@ -32,7 +32,7 @@ implicit val config = NoOauthConfig("apiKey")
 //   )(implicit noOauthConfig: NoOauthConfig) extends ApiKey
 Posts("blogName").get // Future[Response]
 
-implicit val config = OauthConfig("apiKey", "oauthToken", "oauthTokenSecret")
+implicit val config = OauthConfig("oauthToken", "oauthTokenSecret")
 
 // NOTE:
 //   final case class Following(
