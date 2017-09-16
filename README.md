@@ -29,8 +29,14 @@ implicit val config = NoOauthConfig("apiKey")
 //   Posts(
 //     blogName: String,
 //     params: Option[Map[String, String]] = None
-//   )(implicit config: NoOauthConfig)
+//   )(implicit noOauthConfig: NoOauthConfig) extends ApiKey
 Posts("blogName").get // Future[Response]
 
 implicit val config = OauthConfig("apiKey", "oauthToken", "oauthTokenSecret")
+
+// NOTE:
+//   final case class Following(
+//     blogName: String,
+//     params: Option[Map[String, String]] = None
+//   )(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth
 ```
