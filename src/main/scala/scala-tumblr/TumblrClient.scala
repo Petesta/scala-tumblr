@@ -22,18 +22,18 @@ private[tumblr] trait Tumblr {
 }
 
 private[tumblr] trait ApiKey extends Tumblr {
-  implicit val config: TumblrConfig
+  implicit val noOauthConfig: NoOauthConfig
 
-  protected val apiKey = s"?api_key=${config.apiKey}"
+  protected val apiKey = s"?api_key=${noOauthConfig.apiKey}"
 
   def get = client(Request(Method.Get, s"$root$path$apiKey$keyValuePairs"))
 }
 
 private[tumblr] trait OAuth extends ApiKey {
-  override implicit val config: OauthConfig
+  implicit val oauthConfig: OauthConfig
 
   protected val oauthParams =
-    s"&oauth_token=${config.oauthToken}&oauth_token_secret=${config.oauthTokenSecret}$keyValuePairs"
+    s"&oauth_token=${oauthConfig.oauthToken}&oauth_token_secret=${oauthConfig.oauthTokenSecret}$keyValuePairs"
 
   override def get = client(Request(Method.Get, s"$root$path$apiKey$oauthParams"))
 

@@ -12,28 +12,28 @@ final case class Avatar(blogName: String, size: Int) extends Tumblr {
 final case class Info(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: NoOauthConfig) extends ApiKey {
+)(implicit val noOauthConfig: NoOauthConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/info"
 }
 
 final case class Likes(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: NoOauthConfig) extends ApiKey {
+)(implicit val noOauthConfig: NoOauthConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/likes"
 }
 
 final case class Posts(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: NoOauthConfig) extends ApiKey {
+)(implicit val noOauthConfig: NoOauthConfig) extends ApiKey {
   val path = s"${versionBlog(blogName)}/posts"
 }
 
 final case class Tagged(
   tag: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: NoOauthConfig) extends ApiKey {
+)(implicit val noOauthConfig: NoOauthConfig) extends ApiKey {
   val path = "/v2/tagged"
 
   override def get = client(Request(Method.Get, s"$root$path$apiKey&tag=$tag$keyValuePairs"))
@@ -42,65 +42,65 @@ final case class Tagged(
 final case class Following(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/following"
 }
 
 final case class Followers(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/followers"
 }
 
 final case class PostsQueue(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/queue"
 }
 
 final case class PostsDraft(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/draft"
 }
 
 final case class PostsSubmission(
   blogName: String,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/posts/submission"
 }
 
 final case class UserInfo(
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = "/v2/user/info"
 }
 
 final case class UserDashboard(
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = "/v2/user/dashboard"
 }
 
 final case class UserLikes(
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = "/v2/user/likes"
 }
 
 final case class UserFollowing(
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = "/v2/user/following"
 }
 
 final case class DeletePost(
   blogName: String, id: Long
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"${versionBlog(blogName)}/post/delete"
 
@@ -109,7 +109,7 @@ final case class DeletePost(
 
 final case class FollowUser(
   blogUrl: String
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/follow"
 
@@ -118,7 +118,7 @@ final case class FollowUser(
 
 final case class UnollowUser(
   blogUrl: String
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unfollow"
 
@@ -128,7 +128,7 @@ final case class UnollowUser(
 final case class LikePost(
   id: Long,
   reblogKey: Long
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/like"
 
@@ -138,7 +138,7 @@ final case class LikePost(
 final case class UnlikePost(
   id: Long,
   reblogKey: Long
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val params: Option[Map[String, String]] = None
   val path = s"/v2/user/unlike"
 
@@ -149,7 +149,7 @@ final case class CreatePost(
   blogName: String,
   posts: PostType,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post"
 
   override protected val url = s"$urlBuilder${posts.`type`}"
@@ -159,7 +159,7 @@ final case class EditPost(
   blogName: String,
   posts: PostType,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post/edit"
 
   override protected val url = s"$urlBuilder${posts.`type`}"
@@ -171,7 +171,7 @@ final case class ReblogPost(
   reblogKey: Long,
   posts: PostType,
   params: Option[Map[String, String]] = None
-)(implicit val config: OauthConfig) extends OAuth {
+)(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth {
   val path = s"${versionBlog(blogName)}/post/reblog"
 
   override protected val url = s"$urlBuilder${posts.`type`}&id=$id&reblog_key=$reblogKey"
