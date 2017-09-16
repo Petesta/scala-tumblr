@@ -39,4 +39,5 @@ implicit val oauthConfig = OauthConfig("oauthToken", "oauthTokenSecret")
 //     blogName: String,
 //     params: Option[Map[String, String]] = None
 //   )(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth
+Following("blogName").get
 ```
