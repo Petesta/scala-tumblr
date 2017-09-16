@@ -1,6 +1,6 @@
 name := "scala-tumblr"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
 resolvers += Resolver.sonatypeRepo("public")
 
