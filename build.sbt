@@ -5,11 +5,12 @@ scalaVersion := "2.11.11"
 resolvers += Resolver.sonatypeRepo("public")
 
 val twitter = "com.twitter"
+val twitterVersion = "7.1.0"
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.7",
-  twitter %% "finagle-http" % "7.0.0",
-  twitter %% "util-collection" % "6.27.0"
+  twitter %% "finagle-http" % twitterVersion,
+  twitter %% "util-collection" % twitterVersion
 )
 
 scalacOptions ++= Seq(
