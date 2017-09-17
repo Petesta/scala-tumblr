@@ -22,9 +22,9 @@ private[tumblr] trait Tumblr {
 }
 
 private[tumblr] trait ApiKey extends Tumblr {
-  implicit val noOauthConfig: NoOauthConfig
+  implicit val apiConfig: ApiConfig
 
-  protected val apiKey = s"?api_key=${noOauthConfig.apiKey}"
+  protected val apiKey = s"?api_key=${apiConfig.apiKey}"
 
   def get = client(Request(Method.Get, s"$root$path$apiKey$keyValuePairs"))
 }
