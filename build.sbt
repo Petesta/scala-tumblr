@@ -2,6 +2,8 @@ name := "scala-tumblr"
 
 scalaVersion := "2.11.11"
 
+description := "Tumblr API"
+
 val twitter = "com.twitter"
 val twitterVersion = "7.1.0"
 
