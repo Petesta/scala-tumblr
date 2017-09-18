@@ -23,13 +23,13 @@ import io.github.petesta.tumblr._
 // Avatar(blogName: String, size: Int)
 Avatar("blogName", 64).get // Future[Response]
 
-implicit val noOauthConfig = NoOauthConfig("apiKey")
+implicit val apiConfig = ApiConfig("apiKey")
 
 // NOTE:
 //   Posts(
 //     blogName: String,
 //     params: Option[Map[String, String]] = None
-//   )(implicit noOauthConfig: NoOauthConfig) extends ApiKey
+//   )(implicit apiConfig: ApiConfig) extends ApiKey
 Posts("blogName").get // Future[Response]
 
 implicit val oauthConfig = OauthConfig("oauthToken", "oauthTokenSecret")
@@ -38,6 +38,6 @@ implicit val oauthConfig = OauthConfig("oauthToken", "oauthTokenSecret")
 //   final case class Following(
 //     blogName: String,
 //     params: Option[Map[String, String]] = None
-//   )(implicit val oauthConfig: OauthConfig, val noOauthConfig: NoOauthConfig) extends OAuth
-Following("blogName").get
+//   )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends OAuth
+Following("blogName").get // Future[Response]
 ```
