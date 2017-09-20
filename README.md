@@ -6,7 +6,7 @@ scala-tumblr
 
 ## How to use
 ```scala
-libraryDependencies += "io.github.petesta" %% "scala-tumblr" % "0.1"
+libraryDependencies += "io.github.petesta" %% "scala-tumblr" % "0.1.1"
 ```
 
 ## Endpoints
