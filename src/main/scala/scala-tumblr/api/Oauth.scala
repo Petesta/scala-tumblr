@@ -77,7 +77,7 @@ final case class FollowUser(
   override protected val url = s"$urlBuilder&url=$blogUrl"
 }
 
-final case class UnollowUser(
+final case class UnfollowUser(
   blogUrl: String
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
   val params: Option[Map[String, String]] = None
