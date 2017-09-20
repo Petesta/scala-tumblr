@@ -16,8 +16,6 @@ private[tumblr] trait Tumblr {
       opt.view.map { case (key, value) => key + "=" + value }.mkString("&", "&", "")
     }.getOrElse("")
 
-  def get: Future[Response]
-
   protected def versionBlog(blogName: String) = s"/v2/blog/$blogName.tumblr.com"
 }
 
@@ -29,17 +27,23 @@ private[tumblr] trait ApiKey extends Tumblr {
   def get = client(Request(Method.Get, s"$root$path$apiKey$keyValuePairs"))
 }
 
-private[tumblr] trait OAuth extends ApiKey {
+private[tumblr] trait OAuth extends Tumblr {
   implicit val oauthConfig: OauthConfig
+
+  protected val apiKey = s"?api_key=${oauthConfig.apiConfig.apiKey}"
 
   protected val oauthParams =
     s"&oauth_token=${oauthConfig.oauthToken}&oauth_token_secret=${oauthConfig.oauthTokenSecret}$keyValuePairs"
 
-  override def get = client(Request(Method.Get, s"$root$path$apiKey$oauthParams"))
-
   protected val urlBuilder = s"https://$root$path$apiKey$oauthParams$keyValuePairs"
   protected val url = urlBuilder
+}
 
+private[tumblr] trait GET extends OAuth {
+  def get = client(Request(Method.Get, s"$root$path$apiKey$oauthParams"))
+}
+
+private[tumblr] trait POST extends OAuth {
   private val request =
     RequestBuilder()
       .url(url)
@@ -47,4 +51,14 @@ private[tumblr] trait OAuth extends ApiKey {
       .buildPost(Buf.Utf8(""))
 
   def post = client(request)
+}
+
+private[tumblr] trait DELETE extends OAuth {
+  private val request =
+    RequestBuilder()
+      .url(url)
+      .proxied()
+      .buildDelete
+
+  def delete = client(request)
 }
