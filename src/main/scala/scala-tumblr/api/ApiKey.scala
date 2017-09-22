@@ -29,5 +29,5 @@ final case class Tagged(
 )(implicit val apiConfig: ApiConfig) extends ApiKey {
   val path = "/v2/tagged"
 
-  override def get = client(Request(Method.Get, s"$root$path$apiKey&tag=$tag$keyValuePairs"))
+  override def get = client(Request(Method.Get, s"$root$path$apiKey&tag=$tag${paramsString(params)}"))
 }
