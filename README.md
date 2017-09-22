@@ -2,7 +2,7 @@ scala-tumblr
 ============
 
 ## Intro
-`scala-tumblr` is a library built on top of `Finagle` to interface with Tumblr's API.
+`scala-tumblr` is a library built on top of `Finagle` to interface with [Tumblr's API].
 
 ## How to use
 ```scala
@@ -68,3 +68,5 @@ object FutureConverter {
   }
 }
 ```
+
+[Tumblr's API]: https://www.tumblr.com/docs/en/api/v2
