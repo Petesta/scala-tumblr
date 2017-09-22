@@ -60,50 +60,55 @@ final case class UserFollowing(
 }
 
 final case class DeletePost(
-  blogName: String, id: Long
+  blogName: String,
+  id: Long
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends DELETE {
-  val params: Option[Map[String, String]] = None
   val path = s"${versionBlog(blogName)}/post/delete"
-
-  override protected val url = s"$urlBuilder&id=$id"
+  val bodyParams = Some(Map("id" -> id))
 }
 
 final case class FollowUser(
   blogUrl: String
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
-  val params: Option[Map[String, String]] = None
+  val params = None
   val path = s"/v2/user/follow"
-
-  override protected val url = s"$urlBuilder&url=$blogUrl"
+  val bodyParams = Some(Map("url" -> blogUrl))
 }
 
 final case class UnfollowUser(
   blogUrl: String
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
-  val params: Option[Map[String, String]] = None
+  val params = None
   val path = s"/v2/user/unfollow"
-
-  override protected val url = s"$urlBuilder&url=$blogUrl"
+  val bodyParams = Some(Map("url" -> blogUrl))
 }
 
 final case class LikePost(
   id: Long,
   reblogKey: Long
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
-  val params: Option[Map[String, String]] = None
+  val params = None
   val path = s"/v2/user/like"
-
-  override protected val url = s"$urlBuilder&id=$id&reblog_key=$reblogKey"
+  val bodyParams = Some(
+    Map(
+      "id" -> id.toString,
+      "reblog_key" -> reblogKey.toString
+    )
+  )
 }
 
 final case class UnlikePost(
   id: Long,
   reblogKey: Long
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
-  val params: Option[Map[String, String]] = None
+  val params = None
   val path = s"/v2/user/unlike"
-
-  override protected val url = s"$urlBuilder&id=$id&reblog_key=$reblogKey"
+  val bodyParams = Some(
+    Map(
+      "id" -> id.toString,
+      "reblog_key" -> reblogKey.toString
+    )
+  )
 }
 
 final case class CreatePost(
@@ -112,8 +117,10 @@ final case class CreatePost(
   params: Option[Map[String, String]] = None
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
   val path = s"${versionBlog(blogName)}/post"
-
-  override protected val url = s"$urlBuilder${posts.`type`}"
+  val bodyParams = for {
+    mappedParams <- params
+    postsParams <- posts.params
+  } yield mappedParams ++ postsParams
 }
 
 final case class EditPost(
@@ -122,8 +129,10 @@ final case class EditPost(
   params: Option[Map[String, String]] = None
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
   val path = s"${versionBlog(blogName)}/post/edit"
-
-  override protected val url = s"$urlBuilder${posts.`type`}"
+  val bodyParams = for {
+    mappedParams <- params
+    postsParams <- posts.params
+  } yield mappedParams ++ postsParams
 }
 
 final case class ReblogPost(
@@ -134,6 +143,9 @@ final case class ReblogPost(
   params: Option[Map[String, String]] = None
 )(implicit val oauthConfig: OauthConfig, val apiConfig: ApiConfig) extends POST {
   val path = s"${versionBlog(blogName)}/post/reblog"
-
-  override protected val url = s"$urlBuilder${posts.`type`}&id=$id&reblog_key=$reblogKey"
+  val bodyParams = for {
+    mappedParams <- params
+    instanceParams <- Some(Map("id" -> id.toString, "reblog_key" -> reblogKey.toString))
+    postsParams <- posts.params
+  } yield mappedParams ++ postsParams
 }
