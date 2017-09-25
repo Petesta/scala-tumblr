@@ -13,6 +13,8 @@ libraryDependencies ++= Seq(
   twitter %% "util-collection" % twitterVersion
 )
 
+val yWarnUnusedImport = "-Ywarn-unused-import"
+
 scalacOptions ++= Seq(
   "-Xfatal-warnings",
   "-Xfuture",
@@ -20,6 +22,7 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code",
   "-Ywarn-numeric-widen",
   "-Ywarn-unused",
+  yWarnUnusedImport,
   "-Ywarn-value-discard",
   "-encoding", "UTF-8",
   "-feature",
@@ -29,6 +32,8 @@ scalacOptions ++= Seq(
   "-language:implicitConversions",
   "-unchecked"
 )
+
+scalacOptions in (Compile, console) ~= { _.filterNot(Set(yWarnUnusedImport)) }
 
 publishMavenStyle := true
 

@@ -1,9 +1,8 @@
 package io.github.petesta.tumblr
 
 import com.twitter.finagle.Http
-import com.twitter.finagle.http.{Method, Request, RequestBuilder, Response}
+import com.twitter.finagle.http.{Method, Request, RequestBuilder}
 import com.twitter.io.Buf
-import com.twitter.util.Future
 
 private[tumblr] trait Tumblr {
   val path: String
