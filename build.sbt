@@ -1,5 +1,7 @@
 name := "scala-tumblr"
 
+organization := "io.github.petesta"
+
 scalaVersion := "2.11.11"
 
 description := "Tumblr API"
@@ -48,7 +50,7 @@ publishTo := {
 
 publishArtifact in Test := false
 
-pomIncludeRepository := Function.const(false)
+pomIncludeRepository := { _ => false }
 
 pomExtra in Global := {
   <url>https://github.com/Petesta/scala-tumblr</url>
