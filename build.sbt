@@ -52,6 +52,13 @@ pomIncludeRepository := Function.const(false)
 
 pomExtra in Global := {
   <url>https://github.com/Petesta/scala-tumblr</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <scm>
     <url>git@github.com:Petesta/scala-tumblr.git</url>
     <connection>scm:git:git@github.com:Petesta/scala-tumblr.git</connection>
