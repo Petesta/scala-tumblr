@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
 )
 
 val yWarnUnusedImport = "-Ywarn-unused-import"
+val yWarnValueDiscard = "-Ywarn-value-discard"
 
 scalacOptions ++= Seq(
   "-Xfatal-warnings",
@@ -23,7 +24,7 @@ scalacOptions ++= Seq(
   "-Ywarn-numeric-widen",
   "-Ywarn-unused",
   yWarnUnusedImport,
-  "-Ywarn-value-discard",
+  yWarnValueDiscard,
   "-encoding", "UTF-8",
   "-feature",
   "-deprecation",
@@ -33,7 +34,7 @@ scalacOptions ++= Seq(
   "-unchecked"
 )
 
-scalacOptions in (Compile, console) ~= { _.filterNot(Set(yWarnUnusedImport)) }
+scalacOptions in (Compile, console) ~= { _.filterNot(Set(yWarnUnusedImport, yWarnValueDiscard)) }
 
 publishMavenStyle := true
 
