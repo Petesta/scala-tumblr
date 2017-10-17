@@ -17,6 +17,8 @@ private[tumblr] trait Tumblr {
     }.getOrElse("")
 
   protected def versionBlog(blogName: String) = s"/v2/blog/$blogName.tumblr.com"
+
+  def get = client(Request(Method.Get, url))
 }
 
 private[tumblr] trait ApiKey extends Tumblr {
@@ -26,8 +28,6 @@ private[tumblr] trait ApiKey extends Tumblr {
 
   protected val apiKey = s"?api_key=${apiConfig.apiKey}"
   protected val url = s"$root$path$apiKey${paramsString(params)}"
-
-  def get = client(Request(Method.Get, url))
 }
 
 private[tumblr] trait OAuth extends Tumblr {
@@ -44,7 +44,7 @@ private[tumblr] trait OAuth extends Tumblr {
 }
 
 private[tumblr] trait GET extends OAuth {
-  def get = client(Request(Method.Get, url))
+  override def get = client(Request(Method.Get, url))
 }
 
 private[tumblr] trait POST extends OAuth {
